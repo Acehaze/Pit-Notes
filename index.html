@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Pit Notes</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #141414;
+            --bg-input: #1a1a1a;
+            --border: #2a2a2a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #888;
+            --text-muted: #555;
+            --accent-orange: #ff6b35;
+            --accent-orange-dim: #cc5529;
+            --accent-red: #e63946;
+            --accent-green: #2ecc71;
+            --accent-blue: #3498db;
+            --tire-hot: #ff6b35;
+            --tire-cold: #3498db;
+        }
+
+        body {
+            font-family: 'Source Code Pro', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(180deg, #1a1a1a 0%, var(--bg-dark) 100%);
+            padding: 20px 16px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-orange);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo span {
+            color: var(--accent-orange);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 16px;
+            background: var(--bg-dark);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'Oswald', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab.active {
+            background: var(--accent-orange);
+            color: #000;
+            border-color: var(--accent-orange);
+        }
+
+        .nav-tab:not(.active):hover {
+            background: var(--bg-input);
+            border-color: var(--text-muted);
+        }
+
+        /* Main Content */
+        main {
+            padding: 0 16px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--accent-orange);
+            border-radius: 2px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        /* Tire Grid */
+        .tire-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tire-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .tire-position {
+            font-family: 'Oswald', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .tire-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tire-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tire-input-label {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: 36px;
+            text-align: right;
+        }
+
+        .tire-input-label.cold {
+            color: var(--tire-cold);
+        }
+
+        .tire-input-label.hot {
+            color: var(--tire-hot);
+        }
+
+        .tire-input {
+            flex: 1;
+            padding: 10px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .tire-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+
+        .tire-unit {
+            font-size: 11px;
+            color: var(--text-muted);
+            width: 28px;
+        }
+
+        /* Alignment Grid */
+        .alignment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .alignment-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .alignment-label {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .alignment-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .alignment-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-orange);
+            color: #000;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-orange-dim);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-muted);
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        /* Session List */
+        .session-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .session-item:hover {
+            border-color: var(--text-muted);
+        }
+
+        .session-item:active {
+            transform: scale(0.98);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .session-track {
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .session-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .session-car {
+            font-size: 13px;
+            color: var(--accent-orange);
+            margin-bottom: 8px;
+        }
+
+        .session-preview {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .session-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Car List */
+        .car-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .car-info h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .car-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .car-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+
+        .icon-btn.delete:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-footer .btn {
+            flex: 1;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent-green);
+            color: #000;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: var(--accent-orange);
+            border: none;
+            border-radius: 50%;
+            color: #000;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* Weather icons inline */
+        .weather-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            main {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .tire-grid {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🏁</div>
+            PIT<span>NOTES</span>
+        </div>
+    </header>
+
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-view="sessions">Sessions</button>
+        <button class="nav-tab" data-view="cars">Cars</button>
+        <button class="nav-tab" data-view="new">+ New</button>
+    </nav>
+
+    <main>
+        <!-- Sessions View -->
+        <div id="sessions-view" class="view active">
+            <div id="sessions-list"></div>
+            <div id="sessions-empty" class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p class="empty-state-text">No sessions recorded yet.<br>Add your first track day!</p>
+                <button class="btn btn-primary" onclick="showView('new')">+ New Session</button>
+            </div>
+        </div>
+
+        <!-- Cars View -->
+        <div id="cars-view" class="view">
+            <div id="cars-list"></div>
+            <div id="cars-empty" class="empty-state">
+                <div class="empty-state-icon">🚗</div>
+                <p class="empty-state-text">No cars added yet.<br>Add your vehicle to get started.</p>
+                <button class="btn btn-primary" onclick="openCarModal()">+ Add Car</button>
+            </div>
+            <button class="fab" onclick="openCarModal()">+</button>
+        </div>
+
+        <!-- New Session View -->
+        <div id="new-view" class="view">
+            <form id="session-form">
+                <!-- Basic Info -->
+                <div class="card">
+                    <div class="card-header">Session Info</div>
+                    <div class="form-group">
+                        <label class="form-label">Track Name</label>
+                        <input type="text" class="form-input" id="track-name" placeholder="e.g. Spa-Francorchamps" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" id="session-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Car</label>
+                        <select class="form-select" id="session-car" required>
+                            <option value="">Select a car...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weather</label>
+                        <select class="form-select" id="session-weather">
+                            <option value="sunny">☀️ Sunny / Dry</option>
+                            <option value="cloudy">☁️ Cloudy</option>
+                            <option value="wet">🌧️ Wet</option>
+                            <option value="mixed">🌦️ Mixed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Track Temp (°C)</label>
+                        <input type="number" class="form-input" id="track-temp" placeholder="e.g. 32">
+                    </div>
+                </div>
+
+                <!-- Tire Pressures -->
+                <div class="card">
+                    <div class="card-header">Tire Pressures (PSI)</div>
+                    <div class="tire-grid">
+                        <div class="tire-box">
+                            <div class="tire-position">Front Left</div>
+                            <div class="tire-inputs">
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label cold">Cold</span>
+                                    <input type="number" step="0.1" class="tire-input" id="fl-cold" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label hot">Hot</span>
+                                    <input type="number" step="0.1" class="tire-input" id="fl-hot" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tire-box">
+                            <div class="tire-position">Front Right</div>
+                            <div class="tire-inputs">
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label cold">Cold</span>
+                                    <input type="number" step="0.1" class="tire-input" id="fr-cold" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label hot">Hot</span>
+                                    <input type="number" step="0.1" class="tire-input" id="fr-hot" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tire-box">
+                            <div class="tire-position">Rear Left</div>
+                            <div class="tire-inputs">
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label cold">Cold</span>
+                                    <input type="number" step="0.1" class="tire-input" id="rl-cold" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label hot">Hot</span>
+                                    <input type="number" step="0.1" class="tire-input" id="rl-hot" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tire-box">
+                            <div class="tire-position">Rear Right</div>
+                            <div class="tire-inputs">
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label cold">Cold</span>
+                                    <input type="number" step="0.1" class="tire-input" id="rr-cold" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                                <div class="tire-input-row">
+                                    <span class="tire-input-label hot">Hot</span>
+                                    <input type="number" step="0.1" class="tire-input" id="rr-hot" placeholder="--">
+                                    <span class="tire-unit">psi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tire Compound</label>
+                        <input type="text" class="form-input" id="tire-compound" placeholder="e.g. Michelin PS4S, Nankang AR-1">
+                    </div>
+                </div>
+
+                <!-- Alignment -->
+                <div class="card">
+                    <div class="card-header">Alignment</div>
+                    <div class="alignment-grid">
+                        <div class="alignment-box">
+                            <div class="alignment-label">Front Camber</div>
+                            <input type="text" class="alignment-input" id="front-camber" placeholder="-2.5°">
+                        </div>
+                        <div class="alignment-box">
+                            <div class="alignment-label">Rear Camber</div>
+                            <input type="text" class="alignment-input" id="rear-camber" placeholder="-1.8°">
+                        </div>
+                        <div class="alignment-box">
+                            <div class="alignment-label">Front Toe</div>
+                            <input type="text" class="alignment-input" id="front-toe" placeholder="0mm">
+                        </div>
+                        <div class="alignment-box">
+                            <div class="alignment-label">Rear Toe</div>
+                            <input type="text" class="alignment-input" id="rear-toe" placeholder="+2mm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suspension -->
+                <div class="card">
+                    <div class="card-header">Suspension</div>
+                    <div class="alignment-grid">
+                        <div class="alignment-box">
+                            <div class="alignment-label">Front Ride Height</div>
+                            <input type="text" class="alignment-input" id="front-height" placeholder="e.g. 30mm">
+                        </div>
+                        <div class="alignment-box">
+                            <div class="alignment-label">Rear Ride Height</div>
+                            <input type="text" class="alignment-input" id="rear-height" placeholder="e.g. 35mm">
+                        </div>
+                        <div class="alignment-box">
+                            <div class="alignment-label">Front Damper</div>
+                            <input type="text" class="alignment-input" id="front-damper" placeholder="e.g. 8 clicks">
+                        </div>
+                        <div class="alignment-box">
+                            <div class="alignment-label">Rear Damper</div>
+                            <input type="text" class="alignment-input" id="rear-damper" placeholder="e.g. 6 clicks">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 16px;">
+                        <label class="form-label">Anti-Roll Bars</label>
+                        <input type="text" class="form-input" id="arb" placeholder="e.g. Front: Stiff, Rear: Medium">
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="card">
+                    <div class="card-header">Notes</div>
+                    <div class="form-group">
+                        <label class="form-label">Session Notes / Feedback</label>
+                        <textarea class="form-textarea" id="session-notes" placeholder="How did the car feel? Understeer? Oversteer? Brake balance? Things to try next time..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Best Lap Time</label>
+                        <input type="text" class="form-input" id="best-lap" placeholder="e.g. 2:14.532">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">💾 Save Session</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Car Modal -->
+    <div class="modal-overlay" id="car-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Add Car</span>
+                <button class="modal-close" onclick="closeCarModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Year</label>
+                    <input type="number" class="form-input" id="car-year" placeholder="e.g. 2019">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Make</label>
+                    <input type="text" class="form-input" id="car-make" placeholder="e.g. Porsche">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <input type="text" class="form-input" id="car-model" placeholder="e.g. 911 GT3">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes (optional)</label>
+                    <input type="text" class="form-input" id="car-notes" placeholder="e.g. Track-prepped, roll cage">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCarModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCar()">Save Car</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Detail Modal -->
+    <div class="modal-overlay" id="session-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="session-modal-title">Session Details</span>
+                <button class="modal-close" onclick="closeSessionModal()">×</button>
+            </div>
+            <div class="modal-body" id="session-modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="deleteSession()">Delete</button>
+                <button class="btn btn-secondary" onclick="closeSessionModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Saved!</div>
+
+    <script>
+        // Data storage
+        let cars = JSON.parse(localStorage.getItem('pitnotes_cars')) || [];
+        let sessions = JSON.parse(localStorage.getItem('pitnotes_sessions')) || [];
+        let currentSessionId = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCars();
+            renderSessions();
+            populateCarSelect();
+            document.getElementById('session-date').valueAsDate = new Date();
+
+            // Tab navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    showView(tab.dataset.view);
+                });
+            });
+
+            // Form submission
+            document.getElementById('session-form').addEventListener('submit', saveSession);
+        });
+
+        function showView(viewName) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            
+            document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
+            document.getElementById(`${viewName}-view`).classList.add('active');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Car functions
+        function openCarModal() {
+            document.getElementById('car-modal').classList.add('active');
+        }
+
+        function closeCarModal() {
+            document.getElementById('car-modal').classList.remove('active');
+            document.getElementById('car-year').value = '';
+            document.getElementById('car-make').value = '';
+            document.getElementById('car-model').value = '';
+            document.getElementById('car-notes').value = '';
+        }
+
+        function saveCar() {
+            const year = document.getElementById('car-year').value;
+            const make = document.getElementById('car-make').value;
+            const model = document.getElementById('car-model').value;
+            const notes = document.getElementById('car-notes').value;
+
+            if (!make || !model) {
+                alert('Please enter make and model');
+                return;
+            }
+
+            const car = {
+                id: Date.now(),
+                year,
+                make,
+                model,
+                notes
+            };
+
+            cars.push(car);
+            localStorage.setItem('pitnotes_cars', JSON.stringify(cars));
+            
+            renderCars();
+            populateCarSelect();
+            closeCarModal();
+            showToast('Car added!');
+        }
+
+        function deleteCar(id) {
+            if (!confirm('Delete this car?')) return;
+            cars = cars.filter(c => c.id !== id);
+            localStorage.setItem('pitnotes_cars', JSON.stringify(cars));
+            renderCars();
+            populateCarSelect();
+            showToast('Car deleted');
+        }
+
+        function renderCars() {
+            const list = document.getElementById('cars-list');
+            const empty = document.getElementById('cars-empty');
+
+            if (cars.length === 0) {
+                list.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.style.display = 'block';
+            list.innerHTML = cars.map(car => `
+                <div class="car-item">
+                    <div class="car-info">
+                        <h3>${car.year} ${car.make} ${car.model}</h3>
+                        <p>${car.notes || 'No notes'}</p>
+                    </div>
+                    <div class="car-actions">
+                        <button class="icon-btn delete" onclick="deleteCar(${car.id})">🗑</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateCarSelect() {
+            const select = document.getElementById('session-car');
+            select.innerHTML = '<option value="">Select a car...</option>' + 
+                cars.map(car => `<option value="${car.id}">${car.year} ${car.make} ${car.model}</option>`).join('');
+        }
+
+        function getCarName(carId) {
+            const car = cars.find(c => c.id === parseInt(carId));
+            return car ? `${car.year} ${car.make} ${car.model}` : 'Unknown';
+        }
+
+        // Session functions
+        function saveSession(e) {
+            e.preventDefault();
+
+            const carId = document.getElementById('session-car').value;
+            if (!carId) {
+                alert('Please select a car. Add one in the Cars tab first!');
+                return;
+            }
+
+            const session = {
+                id: Date.now(),
+                track: document.getElementById('track-name').value,
+                date: document.getElementById('session-date').value,
+                carId: parseInt(carId),
+                weather: document.getElementById('session-weather').value,
+                trackTemp: document.getElementById('track-temp').value,
+                tires: {
+                    compound: document.getElementById('tire-compound').value,
+                    fl: { cold: document.getElementById('fl-cold').value, hot: document.getElementById('fl-hot').value },
+                    fr: { cold: document.getElementById('fr-cold').value, hot: document.getElementById('fr-hot').value },
+                    rl: { cold: document.getElementById('rl-cold').value, hot: document.getElementById('rl-hot').value },
+                    rr: { cold: document.getElementById('rr-cold').value, hot: document.getElementById('rr-hot').value }
+                },
+                alignment: {
+                    frontCamber: document.getElementById('front-camber').value,
+                    rearCamber: document.getElementById('rear-camber').value,
+                    frontToe: document.getElementById('front-toe').value,
+                    rearToe: document.getElementById('rear-toe').value
+                },
+                suspension: {
+                    frontHeight: document.getElementById('front-height').value,
+                    rearHeight: document.getElementById('rear-height').value,
+                    frontDamper: document.getElementById('front-damper').value,
+                    rearDamper: document.getElementById('rear-damper').value,
+                    arb: document.getElementById('arb').value
+                },
+                notes: document.getElementById('session-notes').value,
+                bestLap: document.getElementById('best-lap').value
+            };
+
+            sessions.unshift(session);
+            localStorage.setItem('pitnotes_sessions', JSON.stringify(sessions));
+            
+            renderSessions();
+            e.target.reset();
+            document.getElementById('session-date').valueAsDate = new Date();
+            showView('sessions');
+            showToast('Session saved!');
+        }
+
+        function renderSessions() {
+            const list = document.getElementById('sessions-list');
+            const empty = document.getElementById('sessions-empty');
+
+            if (sessions.length === 0) {
+                list.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.style.display = 'block';
+
+            const weatherIcons = {
+                sunny: '☀️',
+                cloudy: '☁️',
+                wet: '🌧️',
+                mixed: '🌦️'
+            };
+
+            list.innerHTML = sessions.map(s => `
+                <div class="session-item" onclick="openSessionModal(${s.id})">
+                    <div class="session-header">
+                        <span class="session-track">${s.track}</span>
+                        <span class="session-date">${formatDate(s.date)}</span>
+                    </div>
+                    <div class="session-car">${getCarName(s.carId)}</div>
+                    <div class="session-preview">
+                        <span class="session-stat">${weatherIcons[s.weather] || '🏁'}</span>
+                        ${s.bestLap ? `<span class="session-stat">⏱ ${s.bestLap}</span>` : ''}
+                        ${s.tires.fl.cold ? `<span class="session-stat">🛞 ${s.tires.fl.cold} psi</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function openSessionModal(id) {
+            currentSessionId = id;
+            const s = sessions.find(sess => sess.id === id);
+            if (!s) return;
+
+            document.getElementById('session-modal-title').textContent = s.track;
+            
+            const weatherNames = {
+                sunny: '☀️ Sunny / Dry',
+                cloudy: '☁️ Cloudy',
+                wet: '🌧️ Wet',
+                mixed: '🌦️ Mixed'
+            };
+
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 4px;">${formatDate(s.date)}</div>
+                    <div style="color: var(--accent-orange);">${getCarName(s.carId)}</div>
+                    <div style="margin-top: 8px;">${weatherNames[s.weather]} ${s.trackTemp ? `• ${s.trackTemp}°C track` : ''}</div>
+                    ${s.bestLap ? `<div style="margin-top: 8px; font-size: 18px;">⏱ Best: ${s.bestLap}</div>` : ''}
+                </div>
+            `;
+
+            // Tires
+            if (s.tires.compound || s.tires.fl.cold) {
+                html += `<div class="card-header" style="margin-top: 16px;">Tires</div>`;
+                if (s.tires.compound) html += `<div style="margin-bottom: 12px; color: var(--text-secondary);">${s.tires.compound}</div>`;
+                html += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                    <div>FL: ${s.tires.fl.cold || '--'}/${s.tires.fl.hot || '--'}</div>
+                    <div>FR: ${s.tires.fr.cold || '--'}/${s.tires.fr.hot || '--'}</div>
+                    <div>RL: ${s.tires.rl.cold || '--'}/${s.tires.rl.hot || '--'}</div>
+                    <div>RR: ${s.tires.rr.cold || '--'}/${s.tires.rr.hot || '--'}</div>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Cold/Hot PSI</div>`;
+            }
+
+            // Alignment
+            if (s.alignment.frontCamber || s.alignment.frontToe) {
+                html += `<div class="card-header" style="margin-top: 20px;">Alignment</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                    <div>Front Camber: ${s.alignment.frontCamber || '--'}</div>
+                    <div>Rear Camber: ${s.alignment.rearCamber || '--'}</div>
+                    <div>Front Toe: ${s.alignment.frontToe || '--'}</div>
+                    <div>Rear Toe: ${s.alignment.rearToe || '--'}</div>
+                </div>`;
+            }
+
+            // Suspension
+            if (s.suspension.frontHeight || s.suspension.frontDamper || s.suspension.arb) {
+                html += `<div class="card-header" style="margin-top: 20px;">Suspension</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                    <div>Front Height: ${s.suspension.frontHeight || '--'}</div>
+                    <div>Rear Height: ${s.suspension.rearHeight || '--'}</div>
+                    <div>Front Damper: ${s.suspension.frontDamper || '--'}</div>
+                    <div>Rear Damper: ${s.suspension.rearDamper || '--'}</div>
+                </div>`;
+                if (s.suspension.arb) html += `<div style="margin-top: 8px; font-size: 13px;">ARB: ${s.suspension.arb}</div>`;
+            }
+
+            // Notes
+            if (s.notes) {
+                html += `<div class="card-header" style="margin-top: 20px;">Notes</div>
+                <div style="font-size: 14px; line-height: 1.5; white-space: pre-wrap;">${s.notes}</div>`;
+            }
+
+            document.getElementById('session-modal-body').innerHTML = html;
+            document.getElementById('session-modal').classList.add('active');
+        }
+
+        function closeSessionModal() {
+            document.getElementById('session-modal').classList.remove('active');
+            currentSessionId = null;
+        }
+
+        function deleteSession() {
+            if (!currentSessionId) return;
+            if (!confirm('Delete this session?')) return;
+            
+            sessions = sessions.filter(s => s.id !== currentSessionId);
+            localStorage.setItem('pitnotes_sessions', JSON.stringify(sessions));
+            
+            closeSessionModal();
+            renderSessions();
+            showToast('Session deleted');
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>
